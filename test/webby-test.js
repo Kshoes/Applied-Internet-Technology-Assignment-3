@@ -53,11 +53,11 @@ function mockReadFile() {
 describe('HTTP_STATUS_CODES and MIME_TYPES', function() {
 
 
-    it('is defined and includes at least one status code', function() {
+    it.only('is defined and includes at least one status code', function() {
         expect(HTTP_STATUS_CODES.hasOwnProperty('200')).to.be.true;
     });
 
-    it('is defined and includes at least one MIME type', function() {
+    it.only('is defined and includes at least one MIME type', function() {
         expect(MIME_TYPES.hasOwnProperty('html')).to.be.true;
     });
 });
@@ -81,20 +81,20 @@ describe('serveStatic', function() {
 
 describe('getExtension', function() {
 
-    it('extracts extension - everything after last . (dot)', function() {
+    it.only('extracts extension - everything after last . (dot)', function() {
         expect(getExtension('foo.bar')).to.equal('bar');
         expect(getExtension('foo.bar.baz.qux')).to.equal('qux');
         expect(getExtension('foo.')).to.equal('');
     });
 
-    it('empty string returned if no . (dot)', function() {
+    it.only('empty string returned if no . (dot)', function() {
         expect(getExtension('foo')).to.equal('');
     });
 });
 
 describe('getMIMEType', function() {
 
-    it('correct MIME type is given based on extension (for example .jpg or .jpeg map to image/jpeg)', function() {
+    it.only('correct MIME type is given based on extension (for example .jpg or .jpeg map to image/jpeg)', function() {
         expect(getMIMEType('foo.jpg')).to.equal('image/jpeg');
         expect(getMIMEType('foo.jpeg')).to.equal('image/jpeg');
         expect(getMIMEType('foo.png')).to.equal('image/png');
@@ -102,14 +102,14 @@ describe('getMIMEType', function() {
         expect(getMIMEType('foo.html')).to.equal('text/html');
     });
 
-    it('empty string returned if extension is not supported', function() {
+    it.only('empty string returned if extension is not supported', function() {
         expect(getMIMEType('foo')).to.equal('');
     });
 });
 
 describe('Request', function() {
 
-    it('parses http method and path information into object properties', function() {
+    it.only('parses http method and path information into object properties', function() {
         let s = 'GET /foo.html HTTP/1.1\r\n';
         s += 'Host: localhost:8080\r\n';
         s += 'Referer: http://bar.baz/qux.html\r\n';
