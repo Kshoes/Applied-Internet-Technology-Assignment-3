@@ -1,6 +1,6 @@
 // webby.js
 const net = require('net');
-const fs = require('fs');
+// const fs = require('fs');
 const path = require('path');
 
 const HTTP_STATUS_CODES = {
@@ -25,6 +25,66 @@ class Request {
         const [method, path, ...remainder] = httpRequest.split(' ');
         this.method = method;
         this.path = path;
+        this.remainder = remainder;
+    }
+}
+
+
+class Response {
+    constructor(socket, statusCode, version) {
+        this.sock = socket;
+
+        this.statusCode = statusCode;
+        this.version = version;
+        if(statusCode === undefined) {
+            this.statusCode = 200;
+        }
+        if(version === undefined) {
+            this.version = "HTTP/1.1";
+        }
+
+        this.headers = {};
+    }
+
+    set(name, value) {
+        this.headers[name] = value;
+    }
+
+    end() {
+        this.sock.end();
+    }
+
+    statusLineToString() {
+        return this.version + " " + this.statusCode + " " + HTTP_STATUS_CODES[this.statusCode] + "\r\n";
+    }
+
+    headersToString() {
+        let s = "";
+
+        const properties = Object.keys(this.headers);
+
+        for(let propCount = 0; propCount < properties.length; propCount++) {
+            s += properties[propCount] + ": " + this.headers[properties[propCount]] + "\r\n";
+        }
+
+        return s;
+    }
+
+    send(body) {
+
+        if(!Object.prototype.hasOwnProperty.call(this.headers, "Content-Type")) {
+            this.set("Content-Type", "text/html");
+        }
+
+        const s = this.statusLineToString() + this.headersToString() + "\r\n";
+        this.sock.write(s);
+        this.sock.write(body);
+        this.end();
+    }
+
+    status(statusCode) {
+        this.statusCode = statusCode;
+        return this;
     }
 }
 
@@ -68,7 +128,7 @@ class App {
     }
 
     handleConnection(sock) {
-        sock.on('data', (data) => handleRequest(socket, data));
+        sock.on('data', (data) => this.handleRequest(sock, data));
     }
 
     handleRequest(sock, binaryData) {
@@ -78,7 +138,7 @@ class App {
             this.processRoutes(req, res);
         }
         else {
-            this.middleware(req, res, this.processRoutes(req, res));
+            this.middleware(req, res, () => this.processRoutes(req, res));
         }
 
     }
@@ -91,70 +151,12 @@ class App {
         const f = this.routes[routeKey];
         if(f === undefined) { 
             res.statusCode = 404;
-            console.log("Page not found.");
+            res.send("Page not found.");
+            //console.log("Page not found.");
         }
         else {
             f(req, res);
         }
-    }
-}
-
-
-class Response {
-    constructor(socket, statusCode, version) {
-        this.sock = socket;
-
-        this.statusCode = statusCode;
-        this.version = version;
-        if(statusCode === undefined) {
-            this.statusCode = 200;
-        }
-        if(version === undefined) {
-            this.version = "HTTP/1.1";
-        }
-
-        this.headers = {};
-    }
-
-    set(name, value) {
-        this.headers[name] = value;
-    }
-
-    end() {
-        this.sock.end();
-    }
-
-    statusLineToString() {
-        return this.version + " " + this.statusCode + " " + HTTP_STATUS_CODES[this.statusCode] + "\r\n";
-    }
-
-    headersToString() {
-        let s = "";
-
-        const properties = Object.keys(this.headers);
-
-        for(let propCount = 0; propCount < properties.length; propCount++) {
-            s += properties[propCount] + ": " +  this.headers[properties[propCount]] + "\r\n";
-        }
-
-        return s;
-    }
-
-    send(body) {
-
-        if(this.headers.hasOwnProperty("Content-Type" === undefined)) {
-            this.set("Content-Type", "text/html");
-        }
-
-        const s = this.statusLineToString() + this.headersToString() + "\r\n";
-        this.sock.write(s);
-        this.sock.write(body);
-        this.end();
-    }
-
-    status(statusCode) {
-        this.statusCode = statusCode;
-        return this;
     }
 }
 
