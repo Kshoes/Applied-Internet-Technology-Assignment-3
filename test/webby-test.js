@@ -125,7 +125,7 @@ describe('Response', function() {
     beforeEach(mockSocket);
 
     describe('constructor', function () {
-        it('sets the sock property and the default values for http version and status code', function () {
+        it.only('sets the sock property and the default values for http version and status code', function () {
             const res = new Response(socket);
 
             expect(res.sock).to.equal(socket);
@@ -135,7 +135,7 @@ describe('Response', function() {
     });
 
     describe('statusLineToString', function() {
-        it('generates an http status line as a string (and includes trailing \\r\\n)', function() {
+        it.only('generates an http status line as a string (and includes trailing \\r\\n)', function() {
             const s = 'HTTP/1.1 200 OK\r\n';
             const res = new Response(socket);
             res.statusCode = 200;
@@ -143,7 +143,7 @@ describe('Response', function() {
             expect(res.statusLineToString()).to.equal(s);
         });
 
-        it('can create a new 404 http status line and turn it into a string', function() {
+        it.only('can create a new 404 http status line and turn it into a string', function() {
             const s = 'HTTP/1.1 404 Not Found\r\n';
             const res = new Response(socket);
             res.statusCode = 404;
@@ -151,7 +151,7 @@ describe('Response', function() {
             expect(res.statusLineToString()).to.equal(s);
         });
 
-        it('can create a new 500 http response and turn it into a string', function() {
+        it.only('can create a new 500 http response and turn it into a string', function() {
             const s = 'HTTP/1.1 500 Internal Server Error\r\n';
             const res = new Response(socket);
             res.statusCode = 500;
@@ -162,7 +162,7 @@ describe('Response', function() {
     });
 
     describe('set', function() {
-        it('can set a header', function() {
+        it.only('can set a header', function() {
             const res = new Response(socket);
             res.set('Content-Type', 'text/plain');
             expect(res.headers['Content-Type']).to.equal('text/plain');
@@ -170,7 +170,7 @@ describe('Response', function() {
     });
 
     describe('headersToString', function () {
-        it('turn headers and body into a string', function () {
+        it.only('turn headers and body into a string', function () {
             let s = 'Content-Type: text/plain\r\n';
             s += 'X-Foo: bar\r\n';
             const res = new Response(socket);
@@ -182,7 +182,7 @@ describe('Response', function() {
     });
 
     describe('end', function () {
-        it('calls end once... when end is called', function () {
+        it.only('calls end once... when end is called', function () {
             const res = new Response(socket);
             res.end();
 
@@ -191,14 +191,14 @@ describe('Response', function() {
     });
 
     describe('status', function () {
-        it('set the http response status on this object', function () {
+        it.only('set the http response status on this object', function () {
             const res = new Response(socket);
             res.status(301);
 
             expect(res.statusCode).to.equal(301);
         });
 
-        it('returns the response object it was called on', function () {
+        it.only('returns the response object it was called on', function () {
             const res = new Response(socket);
             const result = res.status();
 
@@ -207,7 +207,7 @@ describe('Response', function() {
     });
 
     describe('send', function () {
-        it('writes status line first', function () {
+        it.only('writes status line first', function () {
             const res = new Response(socket);
             const body = Buffer.from('foo');
             res.send(body);
@@ -215,7 +215,7 @@ describe('Response', function() {
             expect(socket.write.getCall(0).args[0]).contains('HTTP/1.1 200 OK');
         });
 
-        it('sets default status (200)', function () {
+        it.only('sets default status (200)', function () {
             const res = new Response(socket);
             res.send('foo');
 
@@ -223,7 +223,7 @@ describe('Response', function() {
             expect(res.statusCode).to.equal(200);
         });
 
-        it('calls write at least twice (separate call for body versus other parts of request)', function () {
+        it.only('calls write at least twice (separate call for body versus other parts of request)', function () {
             const res = new Response(socket);
             res.send('foo');
 
@@ -232,7 +232,7 @@ describe('Response', function() {
             expect(res.statusCode).to.equal(200);
         });
 
-        it('calls write with same string passed in as argument (res.send("foo") eventually results in this.sock.write("foo") being called)', function () {
+        it.only('calls write with same string passed in as argument (res.send("foo") eventually results in this.sock.write("foo") being called)', function () {
             const res = new Response(socket);
             const body = 'foo'
             res.send(body);
@@ -240,7 +240,7 @@ describe('Response', function() {
             expect(socket.write.calledWith(body)).to.be.true;
         });
 
-        it('calls write with same exact argument that send was called with, even with Buffer (does not convert image to string)', function () {
+        it.only('calls write with same exact argument that send was called with, even with Buffer (does not convert image to string)', function () {
             const res = new Response(socket);
             const body = Buffer.from('foo');
             res.send(body);
@@ -257,7 +257,7 @@ describe('App', function() {
 
 
     describe('constructor', function () {
-        it('sets the routes, middleware and server values', function () {
+        it.only('sets the routes, middleware and server values', function () {
             const app = new App();
 
             expect(app.routes).to.eql({});
@@ -267,7 +267,7 @@ describe('App', function() {
     });
 
     describe('use', function () {
-        it('sets the middleware property', function () {
+        it.only('sets the middleware property', function () {
             const app = new App();
             const f = (req, res, net) => {};
             app.use(f);
@@ -276,7 +276,7 @@ describe('App', function() {
     });
 
     describe('get', function () {
-        it('adds the function to the routes property', function () {
+        it.only('adds the function to the routes property', function () {
             const app = new App();
             const f = (req, res, net) => {};
             app.get('/foo', f);
@@ -285,43 +285,43 @@ describe('App', function() {
     });
 
     describe('createRouteKey', function () {
-        it('puts together method and path to create a key', function () {
+        it.only('puts together method and path to create a key', function () {
             const app = new App();
             const k = app.createRouteKey('GET', '/foo');
             expect(k).to.equal('GET /foo');
         });
 
-        it('normalizes path casing to lowercase', function () {
+        it.only('normalizes path casing to lowercase', function () {
             const app = new App();
             const k = app.createRouteKey('GET', '/FOO');
             expect(k).to.equal('GET /foo');
         });
 
-        it('normalizes method casing to uppercase', function () {
+        it.only('normalizes method casing to uppercase', function () {
             const app = new App();
             const k = app.createRouteKey('get', '/foo');
             expect(k).to.equal('GET /foo');
         });
 
-        it('removes fragments', function () {
+        it.only('removes fragments', function () {
             const app = new App();
             const k = app.createRouteKey('GET', '/foo#bar');
             expect(k).to.equal('GET /foo');
         });
 
-        it('removes query string', function () {
+        it.only('removes query string', function () {
             const app = new App();
             const k = app.createRouteKey('GET', '/foo?bar=baz');
             expect(k).to.equal('GET /foo');
         });
 
-        it('removes trailing slash', function () {
+        it.only('removes trailing slash', function () {
             const app = new App();
             const k = app.createRouteKey('GET', '/foo/');
             expect(k).to.equal('GET /foo');
         });
 
-        it('traling slash followed by fragment or querystring', function () {
+        it.only('traling slash followed by fragment or querystring', function () {
             const app = new App();
             const k1 = app.createRouteKey('GET', '/foo/?bar=baz');
             const k2 = app.createRouteKey('GET', '/foo/#bar');
@@ -331,31 +331,31 @@ describe('App', function() {
     });
 
     describe('normalizePath', function () {
-        it('normalizes path casing to lowercase', function () {
+        it.only('normalizes path casing to lowercase', function () {
             const app = new App();
             const p = app.normalizePath('/FOO');
             expect(p).to.equal('/foo');
         });
 
-        it('removes fragments', function () {
+        it.only('removes fragments', function () {
             const app = new App();
             const p = app.normalizePath('/foo#bar');
             expect(p).to.equal('/foo');
         });
 
-        it('removes query string', function () {
+        it.only('removes query string', function () {
             const app = new App();
             const p = app.normalizePath('/foo?bar=baz');
             expect(p).to.equal('/foo');
         });
 
-        it('removes trailing slash', function () {
+        it.only('removes trailing slash', function () {
             const app = new App();
             const p = app.normalizePath('/foo/');
             expect(p).to.equal('/foo');
         });
 
-        it('traling slash followed by fragment or querystring', function () {
+        it.only('traling slash followed by fragment or querystring', function () {
             const app = new App();
             const p1 = app.normalizePath('/foo/?bar=baz');
             const p2 = app.normalizePath('/foo/#bar');
@@ -367,7 +367,7 @@ describe('App', function() {
 
     describe('handleConnection', function () {
         beforeEach(mockSocket);
-        it('calls .on("data", callback) on socket object', function () {
+        it.only('calls .on("data", callback) on socket object', function () {
             const app = new App();
             app.handleConnection(socket);
             expect(socket.on.callCount).to.equal(1);
@@ -380,14 +380,14 @@ describe('App', function() {
         beforeEach(mockMiddleware);
         beforeEach(mockRoute);
 
-        it('calls middleware if it\'s set', function () {
+        it.only('calls middleware if it\'s set', function () {
             const app = new App();
             app.use(middleware.f);
             app.handleRequest(socket, Buffer.from('GET /foo HTTP/1.1'));
             expect(middleware.f.callCount).to.equal(1);
         });
 
-        it('calls route handling function that matches key if middleware is not set', function () {
+        it.only('calls route handling function that matches key if middleware is not set', function () {
             const app = new App();
             app.get('/foo', route.f);
             app.handleRequest(socket, Buffer.from('GET /foo HTTP/1.1'));
@@ -399,7 +399,7 @@ describe('App', function() {
         beforeEach(mockSocket);
         beforeEach(mockRoute);
 
-        it('calls route handling function that matches key if middleware is not set', function () {
+        it.only('calls route handling function that matches key if middleware is not set', function () {
             const req = new Request('GET /foo HTTP/1,1')
             const res = new Response(socket);
             const app = new App();
