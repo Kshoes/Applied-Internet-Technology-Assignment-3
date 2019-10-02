@@ -1,6 +1,6 @@
 // webby.js
 const net = require('net');
-// const fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 
 const HTTP_STATUS_CODES = {
@@ -177,6 +177,27 @@ function getMIMEType(fileName) {
     return MIME_TYPES[ext];
 }
 
+function serveStatic(basePath) {
+
+    const f = function(req, res, next) {
+
+        const fsPath = path.join(basePath, req.path);
+        fs.readFile(fsPath, (err, data) => {
+            if(err) {
+                next();
+            }
+            else {
+                const ext = getExtension(req.path);
+                const type = getMIMEType(ext);
+                res.set(ext, type);
+                res.status(200).send(data);
+            }
+        })
+
+    }
+
+    return f;
+}
 
 
 
@@ -197,7 +218,5 @@ module.exports = {
     Request: Request,
     Response: Response,
     App: App,
-
-
-
+    serveStatic, static
 };
