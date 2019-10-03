@@ -150,8 +150,7 @@ class App {
 
         const f = this.routes[routeKey];
         if(f === undefined) { 
-            res.statusCode = 404;
-            res.send("Page not found.");
+            res.status(404).send("Page not found.");
             //console.log("Page not found.");
         }
         else {
@@ -187,9 +186,8 @@ function serveStatic(basePath) {
                 next();
             }
             else {
-                const ext = getExtension(req.path);
-                const type = getMIMEType(ext);
-                res.set(ext, type);
+                const type = getMIMEType(req.path);
+                res.set("Content-Type", type);
                 res.status(200).send(data);
             }
         })
@@ -200,16 +198,6 @@ function serveStatic(basePath) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
 module.exports = {
     HTTP_STATUS_CODES: HTTP_STATUS_CODES,
     MIME_TYPES: MIME_TYPES,
@@ -218,5 +206,5 @@ module.exports = {
     Request: Request,
     Response: Response,
     App: App,
-    serveStatic, static
+    static: serveStatic
 };
