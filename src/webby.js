@@ -191,9 +191,9 @@ function serveStatic(basePath) {
                 res.set("Content-Type", type);
                 res.status(200).send(data);
             }
-        })
+        });
 
-    }
+    };
 
     return f;
 }

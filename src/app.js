@@ -25,6 +25,21 @@ const app = new webby.App();
 
 app.use(webby.static(path.join(__dirname, "..", "public")));
 
+function sendFile(localPath, req, res, next) {
+    const fullPath = path.join(__dirname, "..", localPath);
+
+    fs.readFile(fullPath, (err, data) => {
+        if(err) {
+            next();
+        }
+        else {
+            const type = webby.getMIMEType(req.path);
+            res.set("Content-Type", type);
+            res.status(200).send(data);
+        }
+    });
+}
+
 app.get("/", function(req, res, next) {
     // const indexPath = path.join(__dirname, "..", "/public/html/index.html");
 
@@ -66,7 +81,7 @@ app.get("/gallery", function(req, res, next) {
 
             res.status(200).send(randomizeImg);
         }
-    })
+    });
 
     // sendFile("/public/html/gallery.html", req, res, next);
 });
@@ -75,7 +90,7 @@ app.get("/pics", function(req, res) {
 
     req.path = "/gallery";
     res.set("Location", "/gallery");
-    res.status(308).send("<http><head><meta http-equiv=\"Refresh\" content=\"0; url=localhost:3000\/gallery\" \/></head><body>/body></http>");
+    res.status(308).send("<http><head><meta http-equiv=\"Refresh\" content=\"0; url=localhost:3000/gallery\"/></head><body></body></http>");
 
 });
 
@@ -102,17 +117,3 @@ app.listen(3000, "127.0.0.1");
 console.log("Listening on port 3000!");
 
 
-function sendFile(localPath, req, res, next) {
-    const fullPath = path.join(__dirname, "..", localPath);
-
-    fs.readFile(fullPath, (err, data) => {
-        if(err) {
-            next();
-        }
-        else {
-            const type = webby.getMIMEType(req.path);
-            res.set("Content-Type", type);
-            res.status(200).send(data);
-        }
-    })
-}
