@@ -5,6 +5,7 @@ const path = require('path');
 
 const HTTP_STATUS_CODES = {
     200: "OK",
+    301: "Moved Permanently",
     404: "Not Found",
     500: "Internal Server Error"
 };

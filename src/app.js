@@ -43,9 +43,9 @@ app.get("/", function(req, res, next) {
 
 app.get("/gallery", function(req, res, next) {
 
-    const indexPath = path.join(__dirname, "..", "/public/html/gallery.html");
+    const galleryPath = path.join(__dirname, "..", "/public/html/gallery.html");
 
-    fs.readFile(indexPath, "utf-8", (err, data) => {
+    fs.readFile(galleryPath, "utf-8", (err, data) => {
         if(err) {
             next();
         }
@@ -71,7 +71,13 @@ app.get("/gallery", function(req, res, next) {
     // sendFile("/public/html/gallery.html", req, res, next);
 });
 
-// app.get("/pics", )
+app.get("/pics", function(req, res) {
+
+    req.path = "/gallery";
+    res.set("Location", "/gallery");
+    res.status(308).send("<http><head><meta http-equiv=\"Refresh\" content=\"0; url=localhost:3000\/gallery\" \/></head><body>/body></http>");
+
+});
 
 app.get("/css/styles.css", function(req, res, next) {
     sendFile("/public/css/styles.css", req, res, next);
@@ -94,7 +100,6 @@ app.get("/img/turtle4.jpg", function(req, res, next) {
 
 app.listen(3000, "127.0.0.1");
 console.log("Listening on port 3000!");
-
 
 
 function sendFile(localPath, req, res, next) {
